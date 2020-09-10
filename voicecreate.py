@@ -12,7 +12,7 @@ import sys
 client = discord.Client()
 
 bot = commands.Bot(command_prefix="v.")
-bot.remove_command("help")
+#bot.remove_command("help")
 
 initial_extensions = ['cogs.voice']
 
