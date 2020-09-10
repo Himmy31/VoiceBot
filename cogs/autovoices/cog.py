@@ -24,7 +24,7 @@ class Cog(commands.Cog):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         guildID = member.guild.id
-        c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
+        c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (self.guildID,))
         voice=c.fetchone()
         if voice is None:
             pass
