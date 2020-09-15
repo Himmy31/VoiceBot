@@ -46,7 +46,7 @@ class Cog(commands.Cog):
                     c.execute("SELECT channelLimit FROM guildSettings WHERE guildID = ?", (guildID,))
                     guildSetting=c.fetchone()
                     if setting is None:
-                        name = f"{member.name}'s channel"
+                        name = f"{member.name}'"
                         if guildSetting is None:
                             limit = 0
                         else:
