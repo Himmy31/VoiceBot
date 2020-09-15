@@ -47,7 +47,7 @@ class Bot(commands.Bot):
 
         self.loaded = True
 
-        activity = discord.Activity(name= f"{len(self.guilds)}", type= discord.ActivityType.watching)
+        activity = discord.Activity(name= f"На Margo", type= discord.ActivityType.watching)
         await self.change_presence(status= discord.Status.online, activity= activity)
 
 
