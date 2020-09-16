@@ -126,7 +126,8 @@ class Cog(commands.Cog):
                 new_cat = await ctx.guild.create_category_channel(category.content)
                 embed = discord.Embed(
                     description = 'Введите название канала, в которой должны заходить пользователи для создания канала\n'
-                    'Например: **Создать приват**')
+                    'Например: **Создать приват**',
+                    color = 0x2f3136)
                 await ctx.channel.send(embed = embed, delete_after = 60)
                 try:
                     channel = await self.bot.wait_for('message', check=check, timeout = 60.0)
@@ -145,7 +146,11 @@ class Cog(commands.Cog):
                             c.execute ("INSERT INTO guild VALUES (?, ?, ?, ?)",(guildID,id,channel.id,new_cat.id))
                         else:
                             c.execute ("UPDATE guild SET guildID = ?, ownerID = ?, voiceChannelID = ?, voiceCategoryID = ? WHERE guildID = ?",(guildID,id,channel.id,new_cat.id, guildID))
-                        await ctx.channel.send("**You are all setup and ready to go!**")
+                        embed = discord.Embed(
+                            title = '^^',
+                            description = 'Каналы успешно созданы, и я готов к работе',
+                            color = 0x2f3136)
+                        await ctx.channel.send(embed = embed, delete_after = 15)
                     except:
                         embed = discord.Embed(
                             title = 'Ошибка',
@@ -160,6 +165,7 @@ class Cog(commands.Cog):
             await ctx.channel.send(embed = embed, delete_after = 15)
         conn.commit()
         conn.close()
+
     @commands.command()
     async def setlimit(self, ctx, num):
         conn = sqlite3.connect('voice.db')
@@ -171,9 +177,15 @@ class Cog(commands.Cog):
                 c.execute("INSERT INTO guildSettings VALUES (?, ?, ?)", (ctx.guild.id,f"{ctx.author.name}'s channel",num))
             else:
                 c.execute("UPDATE guildSettings SET channelLimit = ? WHERE guildID = ?", (num, ctx.guild.id))
-            await ctx.send("You have changed the default channel limit for your server!")
+            embed = discord.Embed(
+                description = 'Вы установили стандартый лимит входа в канал по всему серверу',
+                color = 0x2f3136)
+            await ctx.send(embed = embed, delete_after = 15)
         else:
-            await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, только владелец сервера может установить лимит.',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed, delete_after = 15)
         conn.commit()
         conn.close()
 
@@ -181,7 +193,7 @@ class Cog(commands.Cog):
     async def info_error(self, ctx, error):
         print(error)
 
-    @commands.command()
+    @commands.command(aliases = ['закрыть'] )
     async def lock(self, ctx):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
@@ -189,17 +201,23 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name='@everyone')
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, connect=False,read_messages=True)
-            await ctx.channel.send(f'{ctx.author.mention} Voice chat locked! 🔒')
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, закрыл двери в комнату!',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
         conn.commit()
         conn.close()
 
-    @commands.command()
+    @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
@@ -207,17 +225,22 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name='@everyone')
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, connect=True,read_messages=True)
-            await ctx.channel.send(f'{ctx.author.mention} Voice chat unlocked! 🔓')
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, открыл двери в комнату!')
+            await ctx.channel.send(embed = embed)
         conn.commit()
         conn.close()
 
-    @commands.command(aliases=["allow"])
+    @commands.command(aliases = ['owner', 'владелец'] )
     async def permit(self, ctx, member : discord.Member):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
@@ -225,16 +248,22 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, connect=True)
-            await ctx.channel.send(f'{ctx.author.mention} You have permited {member.name} to have access to the channel. ✅')
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, передал права канала {member.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
         conn.commit()
         conn.close()
 
-    @commands.command(aliases=["deny"])
+    @commands.command(aliases = ['kick'] )
     async def reject(self, ctx, member : discord.Member):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
@@ -243,7 +272,10 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
@@ -254,7 +286,10 @@ class Cog(commands.Cog):
                     channel2 = self.bot.get_channel(voice[0])
                     await member.move_to(channel2)
             await channel.set_permissions(member, connect=False,read_messages=True)
-            await ctx.channel.send(f'{ctx.author.mention} You have rejected {member.name} from accessing the channel. ❌')
+            embed = discord.Embed(
+                description = f'{member.mention}, был изгнан',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
         conn.commit()
         conn.close()
 
@@ -268,12 +303,18 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
             await channel.edit(user_limit = limit)
-            await ctx.channel.send(f'{ctx.author.mention} You have set the channel limit to be '+ '{}!'.format(limit))
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, установил лимит на канал в количестви' + '{}'.format(limit),
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
             c.execute("SELECT channelName FROM userSettings WHERE userID = ?", (id,))
             voice=c.fetchone()
             if voice is None:
@@ -292,12 +333,18 @@ class Cog(commands.Cog):
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
-            await ctx.channel.send(f"{ctx.author.mention} You don't own a channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
         else:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
             await channel.edit(name = name)
-            await ctx.channel.send(f'{ctx.author.mention} You have changed the channel name to '+ '{}!'.format(name))
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, изменил название канала' + '{}'.format(name),
+                color = 0x2f3136)            
+            await ctx.channel.send(embed = embed)
             c.execute("SELECT channelName FROM userSettings WHERE userID = ?", (id,))
             voice=c.fetchone()
             if voice is None:
@@ -314,21 +361,32 @@ class Cog(commands.Cog):
         c = conn.cursor()
         channel = ctx.author.voice.channel
         if channel == None:
-            await ctx.channel.send(f"{ctx.author.mention} you're not in a voice channel.")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не находитесь в голосовом канале',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 30)
         else:
             id = ctx.author.id
             c.execute("SELECT userID FROM voiceChannel WHERE voiceID = ?", (channel.id,))
             voice=c.fetchone()
             if voice is None:
-                await ctx.channel.send(f"{ctx.author.mention} You can't own that channel!")
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_after = 20)
             else:
                 for data in channel.members:
                     if data.id == voice[0]:
                         owner = ctx.guild.get_member(voice [0])
-                        await ctx.channel.send(f"{ctx.author.mention} This channel is already owned by {owner.mention}!")
+                        embed = discord.Embed(
+                            description = f'{ctx.author.mention}, этот канал уже пренадлоежит {owner.mention}',
+                            color = 0xFF0000)
+                        await ctx.channel.send(embed = embed)
                         x = True
                 if x == False:
-                    await ctx.channel.send(f"{ctx.author.mention} You are now the owner of the channel!")
+                    embed = discord.Embed(
+                        description = f'{ctx.author.mention} Стал владельцем канала' + '{}'.format(channel.id))
+                    await ctx.channel.send(embed = embed)
                     c.execute("UPDATE voiceChannel SET userID = ? WHERE voiceID = ?", (id, channel.id))
             conn.commit()
             conn.close()
