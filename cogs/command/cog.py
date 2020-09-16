@@ -205,9 +205,10 @@ class Cog(commands.Cog):
                 await ctx.channel.send(embed = embed)
             else:
                 channelID = voice[0]
-                role = discord.utils.get(ctx.guild.roles, role)
+                role = discord.utils.get(ctx.guild.roles, id=id)
+                overwrite = discord.PermissionOverwrite(connect=False)
                 channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(role, connect = False)
+                await channel.set_permissions(role, overwrite=overwrite)
                 embed = discord.Embed(
                     description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                     color = 0x2f3136)
@@ -215,6 +216,7 @@ class Cog(commands.Cog):
 
         conn.commit()
         conn.close()
+
 
 
     @commands.command(aliases = ['открыть'] )
