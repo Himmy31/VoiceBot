@@ -171,15 +171,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        if member.id == ctx.author.id:
-            return await ctx.send(embed = discord.Embed(
-                description = f'Напомню, суицид - это не выход!', 
-                color = 0xFF0000), delete_after = 15)
-        if member.top_role > ctx.guild.me.top_role:
-            return await ctx.send(embed = discord.Embed(
-                title = 'Ошибка',
-                description = f'Я не в силах это сделать', 
-                color = 0xFF0000))
         if voice is None:
             return await ctx.channel.send(embed = embed, delete_after = 20)
             embed = discord.Embed(
