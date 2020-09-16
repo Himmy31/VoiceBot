@@ -370,10 +370,10 @@ class Cog(commands.Cog):
             c.execute("SELECT userID FROM voiceChannel WHERE voiceID = ?", (channel.id,))
             voice=c.fetchone()
             if voice is None:
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, вы не владелец данного канала',
+                    color = 0xFF0000)
+                await ctx.channel.send(embed = embed, delete_after = 20)
             else:
                 for data in channel.members:
                     if data.id == voice[0]:
