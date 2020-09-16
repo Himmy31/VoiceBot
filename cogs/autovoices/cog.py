@@ -108,7 +108,7 @@ class Cog(commands.Cog):
             embed = discord.Embed(
                 description = 'У вас есть 60 секунд, чтобы ответить на каждый вопрос!',
                 color = 0x2f3136)
-            await ctx.channel.send(embed = embed, delete_after = 60)
+            await ctx.channel.send(embed = embed, delete_after = 20)
             embed = discord.Embed(
                 description = 'Введите название категории, в которой вы хотите создать каналы\n'
                 'Например: **Приватные каналы**',
