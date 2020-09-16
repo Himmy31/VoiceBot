@@ -176,6 +176,15 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, вы не владелец данного канала',
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
+        if member.id == ctx.author.id:
+            return await ctx.send(embed = discord.Embed(
+                description = f'Напомню, суицид - это не выход!', 
+                color = 0xFF0000), delete_after = 15)
+        if member.top_role > ctx.guild.me.top_role:
+            return await ctx.send(embed = discord.Embed(
+                title = 'Ошибка',
+                description = f'Я не в силах это сделать', 
+                color = 0xFF0000))
         elif member is None:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
@@ -206,6 +215,7 @@ class Cog(commands.Cog):
 
         conn.commit()
         conn.close()
+
 
 
     @commands.command(aliases = ['открыть'] )
