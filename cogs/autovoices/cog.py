@@ -108,12 +108,12 @@ class Cog(commands.Cog):
             embed = discord.Embed(
                 description = 'У вас есть 60 секунд, чтобы ответить на каждый вопрос!',
                 color = 0x2f3136)
-            await ctx.channel.send(embed = embed, delete_aftre = 60)
+            await ctx.channel.send(embed = embed, delete_after = 60)
             embed = discord.Embed(
                 description = 'Введите название категории, в которой вы хотите создать каналы\n'
                 'Например: **Приватные каналы**',
                 color = 0x2f3136)
-            await ctx.channel.send(embed = embed, delete_aftre = 60)
+            await ctx.channel.send(embed = embed, delete_after = 60)
             try:
                 category = await self.bot.wait_for('message', check=check, timeout = 60.0)
             except asyncio.TimeoutError:
@@ -121,13 +121,13 @@ class Cog(commands.Cog):
                     title = 'Упс...',
                     description = 'Вы слишком долго отвечали...',
                     color = 0xFF0000)
-                await ctx.channel.send(embed = embed, delete_aftre = 15)
+                await ctx.channel.send(embed = embed, delete_after = 15)
             else:
                 new_cat = await ctx.guild.create_category_channel(category.content)
                 embed = discord.Embed(
                     description = 'Введите название канала, в которой должны заходить пользователи для создания канала\n'
                     'Например: **Создать приват**')
-                await ctx.channel.send(embed = embed, delete_aftre = 60)
+                await ctx.channel.send(embed = embed, delete_after = 60)
                 try:
                     channel = await self.bot.wait_for('message', check=check, timeout = 60.0)
                 except asyncio.TimeoutError:
@@ -135,7 +135,7 @@ class Cog(commands.Cog):
                         title = 'Упс...',
                         description = 'Вы слишком долго отвечали...',
                         color = 0xFF0000)
-                    await ctx.channel.send(embed = embed, delete_aftre = 15)
+                    await ctx.channel.send(embed = embed, delete_after = 15)
                 else:
                     try:
                         channel = await ctx.guild.create_voice_channel(channel.content, category=new_cat)
@@ -152,15 +152,14 @@ class Cog(commands.Cog):
                             description = f'Воспользуйтесь снова командой {PREFIX}setup \n'
                             'Если ошибка повториться, свяжитесь с  <@750309318905036881>',
                             color = 0xFF0000)
-                        await ctx.channel.send(embed = embed, delete_aftre = 15)
+                        await ctx.channel.send(embed = embed, delete_after = 15)
         else:
             embed = discord.Embed(
                 description = 'Только владелец сервера может воспользоваться ботом.',
                 color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_aftre = 15)
+            await ctx.channel.send(embed = embed, delete_after = 15)
         conn.commit()
         conn.close()
-
     @commands.command()
     async def setlimit(self, ctx, num):
         conn = sqlite3.connect('voice.db')
