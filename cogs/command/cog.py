@@ -185,8 +185,8 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, закрыл двери в комнату!',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
-        elif role is None:
-            if member:
+        else:
+            if role is None:
                 channelID = voice[0]
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(member, connect = False)
@@ -195,17 +195,13 @@ class Cog(commands.Cog):
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             else:
-                if role:
-                    channelID = voice[0]
-                    channel = self.bot.get_channel(channelID)
-                    await channel.set_permissions(role, connect = False)
-                    embed = discord.Embed(
-                        description = f'{ctx.author.mention}, закрывает доступ к роль',
-                        color = 0x2f3136)
-                    await ctx.channel.send(embed = embed)
-
-        conn.commit()
-        conn.close()
+                channelID = voice[0]
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, connect = False)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
 
 
     @commands.command(aliases = ['открыть'] )
