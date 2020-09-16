@@ -168,7 +168,6 @@ class Cog(commands.Cog):
     async def l(self, ctx, member: discord.Member = None, role: discord.Role = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
-        id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
@@ -196,10 +195,11 @@ class Cog(commands.Cog):
                 await ctx.channel.send(embed = embed)
             else:
                 channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, role)
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, connect = False)
                 embed = discord.Embed(
-                    description = f'{ctx.author.mention}, закрывает доступ к 1',
+                    description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
 
