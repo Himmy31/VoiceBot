@@ -165,7 +165,7 @@ class Cog(commands.Cog):
         conn.close()
 
     @commands.command()
-    async def l(self, ctx, member: discord.Member = None):
+    async def l(self, ctx, member: discord.Member = None, role: discord.Role = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -202,6 +202,9 @@ class Cog(commands.Cog):
                     description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
+
+        conn.commit()
+        conn.close()
 
 
     @commands.command(aliases = ['открыть'] )
