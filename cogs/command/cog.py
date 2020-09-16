@@ -171,11 +171,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        if voice is None:
-            return await ctx.channel.send(embed = embed, delete_after = 20)
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
         if member.id == ctx.author.id:
             return await ctx.send(embed = discord.Embed(
                 description = f'Напомню, суицид - это не выход!', 
@@ -185,6 +180,11 @@ class Cog(commands.Cog):
                 title = 'Ошибка',
                 description = f'Я не в силах это сделать', 
                 color = 0xFF0000))
+        if voice is None:
+            return await ctx.channel.send(embed = embed, delete_after = 20)
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                color = 0xFF0000)
         elif member is None:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
@@ -215,6 +215,7 @@ class Cog(commands.Cog):
 
         conn.commit()
         conn.close()
+
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, member: discord.Member = None):
