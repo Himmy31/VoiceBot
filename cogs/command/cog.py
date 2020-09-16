@@ -199,7 +199,7 @@ class Cog(commands.Cog):
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, connect = False)
                 embed = discord.Embed(
-                    description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
+                    description = f'{ctx.author.mention}, закрывает доступ к 1',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
 
