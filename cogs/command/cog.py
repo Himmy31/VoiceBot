@@ -131,7 +131,7 @@ class Cog(commands.Cog):
         print(error)
 
     @commands.command(aliases = ['закрыть'] )
-    async def lock(self, ctx):
+    async def lock(self, ctx, member: discord.Member = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -143,16 +143,27 @@ class Cog(commands.Cog):
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
         else:
-            channelID = voice[0]
-            role = discord.utils.get(ctx.guild.roles, name='@everyone')
-            channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(role, connect=False,read_messages=True)
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, закрыл двери в комнату!',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
+            if member is None:
+                channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, name='@everyone')
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, connect=False,read_messages=True)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, закрыл двери в комнату!',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
+            else:
+                channelID = voice[0]
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(member, connect = False)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, выгнал {member.mention}',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
+
         conn.commit()
         conn.close()
+
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, member: discord.Member = None):
@@ -186,84 +197,6 @@ class Cog(commands.Cog):
 
         conn.commit()
         conn.close()
-
-    @commands.command(aliases = ['owner', 'владелец'] )
-    async def permit(self, ctx, member : discord.Member):
-        conn = sqlite3.connect('voice.db')
-        c = conn.cursor()
-        id = ctx.author.id
-        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
-        voice=c.fetchone()
-        if voice is None:
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
-        else:
-            channelID = voice[0]
-            channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(member, connect=True)
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, передал права канала {member.mention}',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
-        conn.commit()
-        conn.close()
-
-    @commands.command(aliases = ['inv', 'пригласить'] )
-    async def invite(self, ctx, member : discord.Member, ):
-        conn = sqlite3.connect('voice.db')
-        c = conn.cursor()
-        id = ctx.author.id
-        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
-        voice=c.fetchone()
-        if voice is None:
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
-        else:
-            channelID = voice[0]
-            channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(member, connect=True)
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, выдал доступ к каналу {member.mention}',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
-        conn.commit()
-        conn.close()
-
-    @commands.command(aliases = ['kick'] )
-    async def reject(self, ctx, member : discord.Member):
-        conn = sqlite3.connect('voice.db')
-        c = conn.cursor()
-        id = ctx.author.id
-        guildID = ctx.guild.id
-        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
-        voice=c.fetchone()
-        if voice is None:
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
-        else:
-            channelID = voice[0]
-            channel = self.bot.get_channel(channelID)
-            for members in channel.members:
-                if members.id == member.id:
-                    c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
-                    voice=c.fetchone()
-                    channel2 = self.bot.get_channel(voice[0])
-                    await member.move_to(channel2)
-            await channel.set_permissions(member, connect=False,read_messages=True)
-            embed = discord.Embed(
-                description = f'{member.mention}, был изгнан',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
-        conn.commit()
-        conn.close()
-
-
 
     @commands.command()
     async def limit(self, ctx, limit):
