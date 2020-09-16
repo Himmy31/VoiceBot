@@ -168,6 +168,7 @@ class Cog(commands.Cog):
     async def l(self, ctx, member: discord.Member = None, role: discord.Role = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
+        id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
         if voice is None:
