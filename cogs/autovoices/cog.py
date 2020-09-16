@@ -37,8 +37,8 @@ class Cog(commands.Cog):
                     if cooldown is None:
                         pass
                     else:
-                        await member.send("Creating channels too quickly you've been put on a 15 second cooldown!")
-                        await asyncio.sleep(15)
+                        await member.send("Нельзя создавать так часто каналы. Отдохните 5 секунд.")
+                        await asyncio.sleep(5)
                     c.execute("SELECT voiceCategoryID FROM guild WHERE guildID = ?", (guildID,))
                     voice=c.fetchone()
                     c.execute("SELECT channelName, channelLimit FROM userSettings WHERE userID = ?", (member.id,))
@@ -84,17 +84,17 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def help(self, ctx):
-    	embed = discord.Embed(
-    		title = 'Commands',
-    		description = f'`{PREFIX}lock` - Lock your channel \n' 
-    		f'`{PREFIX}unlock` - Unlock your channel\n' 
-    		f'`{PREFIX}name` name - Change your channel name \n' 
-    		f'`{PREFIX}limit` number - Change your channel limit \n' 
-    		f'`{PREFIX}permit` @Name - Give users permission\n'
-    		f'`{PREFIX}reject` @Name - Remove permission and the user from your channel\n'
-    		f'`{PREFIX}claim` - Claim ownership of channel',
-    		color = 0x2f3136)
-    	await ctx.send(embed = embed)
+        embed = discord.Embed(
+            title = 'Команды',
+            description = f'`{PREFIX}lock` - Закрыть свой голосовой канал\n' 
+            f'`{PREFIX}unlock` - Открыт свой голосовой канал\n' 
+            f'`{PREFIX}name` name - Изменить имя голосовому каналу\n' 
+            f'`{PREFIX}limit` number - Изменить количество участников\n' 
+            f'`{PREFIX}permit` @Name - Передать права канала\n'
+            f'`{PREFIX}reject` @Name - Выгнать пользователя из голосового канал\n'
+            f'`{PREFIX}claim` - Заявить свои права на голосовой канал',
+            color = 0x2f3136)
+        await ctx.send(embed = embed)
 
     @commands.command()
     async def setup(self, ctx):
@@ -105,19 +105,37 @@ class Cog(commands.Cog):
         if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 151028268856770560:
             def check(m):
                 return m.author.id == ctx.author.id
-            await ctx.channel.send("**You have 60 seconds to answer each question!**")
-            await ctx.channel.send(f"**Enter the name of the category you wish to create the channels in:(e.g Voice Channels)**")
+            embed = discord.Embed(
+                description = 'У вас есть 60 секунд, чтобы ответить на каждый вопрос!',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed, delete_aftre = 60)
+            embed = discord.Embed(
+                description = 'Введите название категории, в которой вы хотите создать каналы\n'
+                'Например: **Приватные каналы**',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed, delete_aftre = 60)
             try:
                 category = await self.bot.wait_for('message', check=check, timeout = 60.0)
             except asyncio.TimeoutError:
-                await ctx.channel.send('Took too long to answer!')
+                embed = discord.Embed(
+                    title = 'Упс...',
+                    description = 'Вы слишком долго отвечали...',
+                    color = 0xFF0000)
+                await ctx.channel.send(embed = embed, delete_aftre = 15)
             else:
                 new_cat = await ctx.guild.create_category_channel(category.content)
-                await ctx.channel.send('**Enter the name of the voice channel: (e.g Join To Create)**')
+                embed = discord.Embed(
+                    description = 'Введите название канала, в которой должны заходить пользователи для создания канала\n'
+                    'Например: **Создать приват**')
+                await ctx.channel.send(embed = embed, delete_aftre = 60)
                 try:
                     channel = await self.bot.wait_for('message', check=check, timeout = 60.0)
                 except asyncio.TimeoutError:
-                    await ctx.channel.send('Took too long to answer!')
+                    embed = discord.Embed(
+                        title = 'Упс...',
+                        description = 'Вы слишком долго отвечали...',
+                        color = 0xFF0000)
+                    await ctx.channel.send(embed = embed, delete_aftre = 15)
                 else:
                     try:
                         channel = await ctx.guild.create_voice_channel(channel.content, category=new_cat)
@@ -129,9 +147,17 @@ class Cog(commands.Cog):
                             c.execute ("UPDATE guild SET guildID = ?, ownerID = ?, voiceChannelID = ?, voiceCategoryID = ? WHERE guildID = ?",(guildID,id,channel.id,new_cat.id, guildID))
                         await ctx.channel.send("**You are all setup and ready to go!**")
                     except:
-                        await ctx.channel.send(f"You didn't enter the names properly.\n Use {PREFIX}setup")
+                        embed = discord.Embed(
+                            title = 'Ошибка',
+                            description = f'Воспользуйтесь снова командой {PREFIX}setup \n'
+                            'Если ошибка повториться, свяжитесь с  <@750309318905036881>',
+                            color = 0xFF0000)
+                        await ctx.channel.send(embed = embed, delete_aftre = 15)
         else:
-            await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
+            embed = discord.Embed(
+                description = 'Только владелец сервера может воспользоваться ботом.',
+                color = 0xFF0000)
+            await ctx.channel.send(embed = embed, delete_aftre = 15)
         conn.commit()
         conn.close()
 
