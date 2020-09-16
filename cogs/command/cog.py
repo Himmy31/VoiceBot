@@ -155,7 +155,7 @@ class Cog(commands.Cog):
         conn.close()
 
     @commands.command(aliases = ['открыть'] )
-    async def unlock(self, ctx):
+    async def unlock(self, ctx, member: discord.Member = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -167,13 +167,23 @@ class Cog(commands.Cog):
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
         else:
-            channelID = voice[0]
-            role = discord.utils.get(ctx.guild.roles, name='@everyone')
-            channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(role, connect=True,read_messages=True)
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, открыл двери в комнату!')
-            await ctx.channel.send(embed = embed)
+            if member is None:
+                channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, name='@everyone')
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, connect=True,read_messages=True)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, открыл двери в комнату!')
+                await ctx.channel.send(embed = embed)
+            else:
+                channelID = voice[0]
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(member, connect=True)
+                embed = discord.Embed(
+                    description = f'{ctx.author.mention}, впустил {member.mention}',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
+
         conn.commit()
         conn.close()
 
@@ -217,7 +227,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, connect=True)
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, передал права канала {member.mention}',
+                description = f'{ctx.author.mention}, выдал доступ к каналу {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         conn.commit()
