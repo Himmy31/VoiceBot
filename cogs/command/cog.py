@@ -195,19 +195,21 @@ class Cog(commands.Cog):
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             else:
-                channelID = voice[0]
-                overwrite = discord.PermissionOverwrite()
-                overwrite.send_messages=False
-                overwrite.read_messages=False
-                await channel.set_permissions(role, overwrite=overwrite)
-                channel = self.bot.get_channel(channelID)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
-                    color = 0x2f3136)
-                await ctx.channel.send(embed = embed)
+                if role:
+                    channelID = voice[0]
+                    overwrite = discord.PermissionOverwrite()
+                    overwrite.send_messages=False
+                    overwrite.read_messages=False
+                    await channel.set_permissions(role, overwrite=overwrite)
+                    channel = self.bot.get_channel(channelID)
+                    embed = discord.Embed(
+                        description = f'{ctx.author.mention}, закрывает доступ к ',
+                        color = 0x2f3136)
+                    await ctx.channel.send(embed = embed)
 
         conn.commit()
         conn.close()
+
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, member: discord.Member = None):
