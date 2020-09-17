@@ -132,42 +132,8 @@ class Cog(commands.Cog):
     async def info_error(self, ctx, error):
         print(error)
 
-    @commands.command(aliases = ['закрыть'] )
-    async def lock(self, ctx, member: discord.Member = None):
-        conn = sqlite3.connect('voice.db')
-        c = conn.cursor()
-        id = ctx.author.id
-        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
-        voice=c.fetchone()
-        if voice is None:
-            embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
-                color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
-        else:
-            if member is None:
-                channelID = voice[0]
-                role = discord.utils.get(ctx.guild.roles, name='@everyone')
-                channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(role, connect=False,read_messages=True)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, закрыл двери в комнату!',
-                    color = 0x2f3136)
-                await ctx.channel.send(embed = embed)
-            else:
-                channelID = voice[0]
-                channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(member, connect = False)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, выгнал {member.mention}',
-                    color = 0x2f3136)
-                await ctx.channel.send(embed = embed)
-
-        conn.commit()
-        conn.close()
-
     @commands.command()
-    async def l(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+    async def lock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -178,7 +144,7 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, вы не владелец данного канала',
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
-        elif member is None:
+        elif role is None:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
             channel = self.bot.get_channel(channelID)
@@ -189,7 +155,10 @@ class Cog(commands.Cog):
             await ctx.channel.send(embed = embed)
         if role:
             channelID = voice[0]
-            await channel.set_permissions(role, connect = False)
+            overwrite = discord.PermissionOverwrite(connect = False)
+            overwrite.send_messages = False
+            overwrite.read_messages = False
+            await ctx.channel.set_permissions(role, overwrite=overwrite)
             channel = self.bot.get_channel(channelID)
             embed = discord.Embed(
                 description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
