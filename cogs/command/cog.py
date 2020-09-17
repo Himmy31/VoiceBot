@@ -165,7 +165,7 @@ class Cog(commands.Cog):
         conn.close()
 
     @commands.command()
-    async def l(self, ctx, member: discord.Member = None, role: discord.Role = None):
+    async def l(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -185,27 +185,22 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, закрыл двери в комнату!',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
-        else:
-            if role is None:
-                channelID = voice[0]
-                channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(member, connect = False)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, выгнал {member.mention}',
-                    color = 0x2f3136)
-                await ctx.channel.send(embed = embed)
-            else:
-                if role:
-                    channelID = voice[0]
-                    overwrite = discord.PermissionOverwrite()
-                    overwrite.send_messages=False
-                    overwrite.read_messages=False
-                    await channel.set_permissions(role, overwrite=overwrite)
-                    channel = self.bot.get_channel(channelID)
-                    embed = discord.Embed(
-                        description = f'{ctx.author.mention}, закрывает доступ к ',
-                        color = 0x2f3136)
-                    await ctx.channel.send(embed = embed)
+        if role:
+            channelID = voice[0]
+            await channel.set_permissions(role, connect = False)
+            channel = self.bot.get_channel(channelID)
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, закрывает доступ к ',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        if member:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(member, connect = False)
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, выгнал {member.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
 
         conn.commit()
         conn.close()
