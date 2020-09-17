@@ -155,11 +155,11 @@ class Cog(commands.Cog):
             await ctx.channel.send(embed = embed)
         if role:
             channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
             overwrite = discord.PermissionOverwrite(connect = False)
             overwrite.send_messages = False
             overwrite.read_messages = False
             await ctx.channel.set_permissions(role, overwrite=overwrite)
-            channel = self.bot.get_channel(channelID)
             embed = discord.Embed(
                 description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                 color = 0x2f3136)
