@@ -150,7 +150,7 @@ class Cog(commands.Cog):
             overwrite = discord.PermissionOverwrite(connect = False)
             overwrite.send_messages = False
             overwrite.read_messages = False
-            await channel.set_permissions(role, overwrite = overwrite)
+            await voice.channel.set_permissions(role, connect = False,)
             embed = discord.Embed(
                 description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                 color = 0x2f3136)
@@ -163,7 +163,16 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, выгнал {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
-
+        else:
+            channelID = voice[0]
+            role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(role, connect=False, read_messages=True)
+            embed = discord.Embed(
+                description = f'{ctx.author.mention}, закрыл двери в комнату!',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+            
         conn.commit()
         conn.close()
 
