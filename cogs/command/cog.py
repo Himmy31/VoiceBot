@@ -131,7 +131,7 @@ class Cog(commands.Cog):
     async def info_error(self, ctx, error):
         print(error)
 
-    @commands.command()
+    @commands.command(aliases = ['locked'])
     async def lock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
@@ -177,7 +177,7 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
-    @commands.command(aliases = ['открыть'] )
+    @commands.command(aliases = ['открыть', 'unlocked'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
@@ -268,8 +268,8 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
-    @commands.command()
-    async def unhide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+    @commands.command(aliases = ['unhide'])
+    async def show(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
