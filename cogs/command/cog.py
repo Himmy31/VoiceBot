@@ -25,15 +25,15 @@ class Cog(commands.Cog):
     async def help(self, ctx):
         embed = discord.Embed(
             title = 'Команды',
-            description = f'`{PREFIX}lock` - Закрыть свой голосовой канал\n' 
-            f'`{PREFIX}unlock` - Открыт свой голосовой канал\n' 
+            description =
+            f'`{PREFIX}lock`/`unlock` - закрыть/открыть приватный канал для всех пользователей.\n' 
+            f'`{PREFIX}hide/show` - скрыть/показать приватный канал от всех пользователей.\n'
+            f'`{PREFIX}claim` - Заявить свои права на голосовой канал',
             f'`{PREFIX}name` name - Изменить имя голосовому каналу\n' 
             f'`{PREFIX}limit` number - Изменить количество участников\n' 
-            f'`{PREFIX}inv` @Name - Окрыть достпу к каналу\n'
-            f'`{PREFIX}reject` @Name - Выгнать пользователя из голосового канал\n'
-            f'`{PREFIX}claim` - Заявить свои права на голосовой канал',
             color = 0x2f3136)
         await ctx.send(embed = embed)
+
 
     @commands.command()
     async def setup(self, ctx):
@@ -217,6 +217,98 @@ class Cog(commands.Cog):
                 await channel.set_permissions(role, overwrite = overwrite)
                 embed = discord.Embed(
                     description = f'<:private_green:756520759697866823> Приватный канал успешно закрыт',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
+            
+        conn.commit()
+        conn.close()
+
+    @commands.command()
+    async def hide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+        await ctx.message.delete()
+        conn = sqlite3.connect('voice.db')
+        c = conn.cursor()
+        id = ctx.author.id
+        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
+        voice=c.fetchone()
+        overwrite = discord.PermissionOverwrite()
+        overwrite.read_messages=False      
+        if voice is None:
+            embed = discord.Embed(
+                description = f'**{PREFIX}hide Участник / Роль**',
+                color = 0xFF0000)
+            embed.set_footer(text = 'Вы не владелец этого канала')
+            await ctx.channel.send(embed = embed, delete_after = 20)
+        if role:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(role, overwrite = overwrite)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно скрыт для {role.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        if member:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(member, overwrite = overwrite)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно скрыт для {member.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        else:
+            if role is None:
+                channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, overwrite = overwrite)
+                embed = discord.Embed(
+                    description = f'Приватный канал успешно скрыт для всех',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
+            
+        conn.commit()
+        conn.close()
+
+    @commands.command()
+    async def unhide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+        await ctx.message.delete()
+        conn = sqlite3.connect('voice.db')
+        c = conn.cursor()
+        id = ctx.author.id
+        c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
+        voice=c.fetchone()
+        overwrite = discord.PermissionOverwrite()
+        overwrite.send_messages = False        
+        if voice is None:
+            embed = discord.Embed(
+                description = f'**{PREFIX}unhide Участник / Роль**',
+                color = 0xFF0000)
+            embed.set_footer(text = 'Вы не владелец этого канала')
+            await ctx.channel.send(embed = embed, delete_after = 20)
+        if role:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(role, overwrite = overwrite)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно показан для {role.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        if member:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(member, overwrite = overwrite)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно показан для {member.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        else:
+            if role is None:
+                channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, overwrite = overwrite)
+                embed = discord.Embed(
+                    description = f'Приватный канал успешно показан для всех',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             
