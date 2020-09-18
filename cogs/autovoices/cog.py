@@ -79,3 +79,4 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
+
