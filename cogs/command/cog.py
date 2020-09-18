@@ -13,7 +13,6 @@ from discord.ext.commands.cooldowns import BucketType
 from time import gmtime, strftime
 from typing import Optional
 
-
 PREFIX = 'v.'
 
 class Cog(commands.Cog):
@@ -25,14 +24,13 @@ class Cog(commands.Cog):
     async def help(self, ctx):
         embed = discord.Embed(
             title = 'Команды',
-            description = f'`{PREFIX}lock/unlock` - закрыть/открыть приватный канал для всех пользователей.\n' 
+            description = f'`{PREFIX}lock`/`unlock` - закрыть/открыть приватный канал для всех пользователей.\n' 
             f'`{PREFIX}hide/show` - скрыть/показать приватный канал от всех пользователей.\n'
-            f'`{PREFIX}claim` - Заявить свои права на голосовой канал\n'
+            f'`{PREFIX}claim` - Заявить свои права на голосовой канал'
             f'`{PREFIX}name` name - Изменить имя голосовому каналу\n' 
             f'`{PREFIX}limit` number - Изменить количество участников\n',
             color = 0x2f3136)
         await ctx.send(embed = embed)
-
 
     @commands.command()
     async def setup(self, ctx):
@@ -131,7 +129,7 @@ class Cog(commands.Cog):
     async def info_error(self, ctx, error):
         print(error)
 
-    @commands.command(aliases = ['locked'])
+    @commands.command()
     async def lock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
@@ -177,7 +175,7 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
-    @commands.command(aliases = ['открыть', 'unlocked'] )
+    @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
@@ -221,6 +219,8 @@ class Cog(commands.Cog):
             
         conn.commit()
         conn.close()
+
+
 
     @commands.command()
     async def hide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
@@ -268,8 +268,8 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
-    @commands.command(aliases = ['unhide'])
-    async def show(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+    @commands.command()
+    async def unhide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
