@@ -35,6 +35,7 @@ class Cog(commands.Cog):
                     if cooldown is None:
                         pass
                     else:
+                        await member.send('Текст')
                         await asyncio.sleep(5)
                     c.execute("SELECT voiceCategoryID FROM guild WHERE guildID = ?", (guildID,))
                     voice=c.fetchone()
@@ -78,5 +79,3 @@ class Cog(commands.Cog):
                 pass
         conn.commit()
         conn.close()
-
-
