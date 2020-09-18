@@ -153,7 +153,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'🔒 Приватный канал успешно закрыт для {role.mention}',
+                description = f'<:private_red:756520760092262521> Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         if member:
@@ -161,7 +161,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'🔒 Приватный канал успешно закрыт для {member.mention}',
+                description = f'<:private_red:756520760092262521> Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
@@ -171,7 +171,7 @@ class Cog(commands.Cog):
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, overwrite = overwrite)
                 embed = discord.Embed(
-                    description = f'🔒 Приватный канал успешно закрыт',
+                    description = f'<:private_red:756520760092262521> Приватный канал успешно закрыт',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             
@@ -198,7 +198,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'🔓 Приватный канал успешно закрыт для {role.mention}',
+                description = f'<:private_green:756520759697866823> Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         if member:
@@ -206,7 +206,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'🔓 Приватный канал успешно закрыт для {member.mention}',
+                description = f'<:private_green:756520759697866823> Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
@@ -216,7 +216,7 @@ class Cog(commands.Cog):
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, overwrite = overwrite)
                 embed = discord.Embed(
-                    description = f'🔓 Приватный канал успешно закрыт',
+                    description = f'<:private_green:756520759697866823> Приватный канал успешно закрыт',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             
