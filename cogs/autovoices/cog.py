@@ -72,7 +72,7 @@ class Cog(commands.Cog):
                         return len(channel2.members) == 0
                     await self.bot.wait_for('voice_state_update', check=check)
                     await channel2.delete()
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(3)
                     c.execute('DELETE FROM voiceChannel WHERE userID=?', (id,))
             except:
                 pass
