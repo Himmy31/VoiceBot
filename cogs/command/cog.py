@@ -147,9 +147,9 @@ class Cog(commands.Cog):
         if role:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
-            #overwrite = discord.PermissionOverwrite(connect = False)
-            #overwrite.send_messages = False
-            await channel.set_permissions(role, connect = False)#overwrite = overwrite)
+            overwrite = discord.PermissionOverwrite(connect = False)
+            overwrite.send_messages = False
+            await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
@@ -157,25 +157,20 @@ class Cog(commands.Cog):
         if member:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(member, connect = False)
+            overwrite = discord.PermissionOverwrite(connect = False)
+            overwrite.send_messages = False
+            await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
-        elif member is None:
+        else:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
             channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(role, connect=False)
-            embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
-        elif role is None:
-            channelID = voice[0]
-            role = discord.utils.get(ctx.guild.roles, name = '@everyone')
-            channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(role, connect=False)
+            overwrite = discord.PermissionOverwrite(connect = False)
+            overwrite.send_messages = False
+            await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт',
                 color = 0x2f3136)
@@ -183,6 +178,7 @@ class Cog(commands.Cog):
             
         conn.commit()
         conn.close()
+
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
