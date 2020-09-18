@@ -147,9 +147,9 @@ class Cog(commands.Cog):
         if role:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
-            overwrite = discord.PermissionOverwrite(connect = False)
-            overwrite.send_messages = False
-            await channel.set_permissions(role, overwrite = overwrite)
+            #overwrite = discord.PermissionOverwrite(connect = False)
+            #overwrite.send_messages = False
+            await channel.set_permissions(role, connect = False)#overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
