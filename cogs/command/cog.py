@@ -143,7 +143,8 @@ class Cog(commands.Cog):
         overwrite.send_messages = False        
         if voice is None:
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                description = f'<a:Deny:756507558625149041> {PREFIX}lock Участник / Роль \n'
+                'Вы не владелец этого канала\n',
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
         if role:
@@ -151,7 +152,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт для {role.mention}',
+                description = f'🔒 Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         if member:
@@ -159,7 +160,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт для {member.mention}',
+                description = f'🔒 Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
@@ -169,13 +170,12 @@ class Cog(commands.Cog):
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, overwrite = overwrite)
                 embed = discord.Embed(
-                    description = f'Приватный канал успешно закрыт',
+                    description = f'🔒 Приватный канал успешно закрыт',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             
         conn.commit()
         conn.close()
-
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
@@ -188,7 +188,8 @@ class Cog(commands.Cog):
         overwrite.send_messages = False        
         if voice is None:
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, вы не владелец данного канала',
+                description = f'<a:Deny:756507558625149041> {PREFIX}lock Участник / Роль \n'
+                'Вы не владелец этого канала\n',
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
         if role:
@@ -196,7 +197,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт для {role.mention}',
+                description = f'🔓 Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         if member:
@@ -204,7 +205,7 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт для {member.mention}',
+                description = f'🔓 Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
@@ -214,7 +215,7 @@ class Cog(commands.Cog):
                 channel = self.bot.get_channel(channelID)
                 await channel.set_permissions(role, overwrite = overwrite)
                 embed = discord.Embed(
-                    description = f'Приватный канал успешно закрыт',
+                    description = f'🔓 Приватный канал успешно закрыт',
                     color = 0x2f3136)
                 await ctx.channel.send(embed = embed)
             
