@@ -35,7 +35,7 @@ class Cog(commands.Cog):
                     if cooldown is None:
                         pass
                     else:
-                        await member.send('Текст')
+                        await member.send("Creating channels too quickly you've been put on a 15 second cooldown!")
                         await asyncio.sleep(5)
                     c.execute("SELECT voiceCategoryID FROM guild WHERE guildID = ?", (guildID,))
                     voice=c.fetchone()
@@ -44,7 +44,7 @@ class Cog(commands.Cog):
                     c.execute("SELECT channelLimit FROM guildSettings WHERE guildID = ?", (guildID,))
                     guildSetting=c.fetchone()
                     if setting is None:
-                        name = f"{member.name}"
+                        name = f"{member.name}'s channel"
                         if guildSetting is None:
                             limit = 0
                         else:
@@ -62,11 +62,11 @@ class Cog(commands.Cog):
                     categoryID = voice[0]
                     id = member.id
                     category = self.bot.get_channel(categoryID)
-                    channel2 = await member.guild.create_voice_channel(name, category = category)
+                    channel2 = await member.guild.create_voice_channel(name,category=category)
                     channelID = channel2.id
                     await member.edit(voice_channel = channel2)
-                    await channel2.set_permissions(member, connect = True, manage_channels = True)
-                    await channel2.edit(name = name, user_limit = limit)
+                    await channel2.set_permissions(self.bot.user, connect=True,read_messages=True)
+                    await channel2.edit(name= name, user_limit = limit)
                     c.execute("INSERT INTO voiceChannel VALUES (?, ?)", (id,channelID))
                     conn.commit()
                     def check(a,b,c):
