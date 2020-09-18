@@ -162,7 +162,16 @@ class Cog(commands.Cog):
                 description = f'Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
-        else:
+        elif member is None:
+            channelID = voice[0]
+            role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(role, connect=False)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно закрыт',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        elif role is None:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
             channel = self.bot.get_channel(channelID)
