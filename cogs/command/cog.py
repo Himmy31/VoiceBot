@@ -150,7 +150,7 @@ class Cog(commands.Cog):
             overwrite = discord.PermissionOverwrite(connect = False)
             overwrite.send_messages = False
             overwrite.read_messages = False
-            await voice.channel.set_permissions(role, connect = False,)
+            await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
                 color = 0x2f3136)
