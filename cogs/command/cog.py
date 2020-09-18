@@ -268,7 +268,7 @@ class Cog(commands.Cog):
         conn.commit()
         conn.close()
 
-    @commands.command()
+    @commands.command(aliases = ['show'])
     async def unhide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
