@@ -139,6 +139,8 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
+        overwrite = discord.PermissionOverwrite(connect = False)
+        overwrite.send_messages = False        
         if voice is None:
             embed = discord.Embed(
                 description = f'{ctx.author.mention}, вы не владелец данного канала',
@@ -147,8 +149,6 @@ class Cog(commands.Cog):
         if role:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
-            overwrite = discord.PermissionOverwrite(connect = False)
-            overwrite.send_messages = False
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт для {role.mention}',
@@ -157,24 +157,21 @@ class Cog(commands.Cog):
         if member:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
-            overwrite = discord.PermissionOverwrite(connect = False)
-            overwrite.send_messages = False
             await channel.set_permissions(member, overwrite = overwrite)
             embed = discord.Embed(
                 description = f'Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
-            channelID = voice[0]
-            role = discord.utils.get(ctx.guild.roles, name = '@everyone')
-            channel = self.bot.get_channel(channelID)
-            overwrite = discord.PermissionOverwrite(connect = False)
-            overwrite.send_messages = False
-            await channel.set_permissions(role, overwrite = overwrite)
-            embed = discord.Embed(
-                description = f'Приватный канал успешно закрыт',
-                color = 0x2f3136)
-            await ctx.channel.send(embed = embed)
+            if role is None:
+                channelID = voice[0]
+                role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+                channel = self.bot.get_channel(channelID)
+                await channel.set_permissions(role, overwrite = overwrite)
+                embed = discord.Embed(
+                    description = f'Приватный канал успешно закрыт',
+                    color = 0x2f3136)
+                await ctx.channel.send(embed = embed)
             
         conn.commit()
         conn.close()
