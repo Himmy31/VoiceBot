@@ -12,8 +12,6 @@ import validators
 from discord.ext.commands.cooldowns import BucketType
 from time import gmtime, strftime
 
-PREFIX = 'v.'
-
 class Cog(commands.Cog):
 
     def __init__(self, bot):
@@ -37,7 +35,6 @@ class Cog(commands.Cog):
                     if cooldown is None:
                         pass
                     else:
-                        await member.send("Нельзя создавать так часто каналы. Отдохните 5 секунд.")
                         await asyncio.sleep(5)
                     c.execute("SELECT voiceCategoryID FROM guild WHERE guildID = ?", (guildID,))
                     voice=c.fetchone()
@@ -75,9 +72,10 @@ class Cog(commands.Cog):
                         return len(channel2.members) == 0
                     await self.bot.wait_for('voice_state_update', check=check)
                     await channel2.delete()
-                    await asyncio.sleep(3)
+                    await asyncio.sleep(0.5)
                     c.execute('DELETE FROM voiceChannel WHERE userID=?', (id,))
             except:
                 pass
         conn.commit()
         conn.close()
+
