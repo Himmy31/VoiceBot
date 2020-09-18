@@ -149,10 +149,9 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             overwrite = discord.PermissionOverwrite(connect = False)
             overwrite.send_messages = False
-            overwrite.read_messages = False
             await channel.set_permissions(role, overwrite = overwrite)
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, закрывает доступ к {role.mention}',
+                description = f'Приватный канал успешно закрыт для {role.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         if member:
@@ -160,22 +159,21 @@ class Cog(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, connect = False)
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, выгнал {member.mention}',
+                description = f'Приватный канал успешно закрыт для {member.mention}',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
         else:
             channelID = voice[0]
             role = discord.utils.get(ctx.guild.roles, name = '@everyone')
             channel = self.bot.get_channel(channelID)
-            await channel.set_permissions(role, connect=False, read_messages=True)
+            await channel.set_permissions(role, connect=False)
             embed = discord.Embed(
-                description = f'{ctx.author.mention}, закрыл двери в комнату!',
+                description = f'Приватный канал успешно закрыт',
                 color = 0x2f3136)
             await ctx.channel.send(embed = embed)
             
         conn.commit()
         conn.close()
-
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, member: discord.Member = None):
@@ -189,23 +187,33 @@ class Cog(commands.Cog):
                 description = f'{ctx.author.mention}, вы не владелец данного канала',
                 color = 0xFF0000)
             await ctx.channel.send(embed = embed, delete_after = 20)
+        if role:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            overwrite = discord.PermissionOverwrite(connect = True)
+            overwrite.send_messages = True
+            await channel.set_permissions(role, overwrite = overwrite)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно открыт для {role.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
+        if member:
+            channelID = voice[0]
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(member, connect = True)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно открыт для {member.mention}',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
         else:
-            if member is None:
-                channelID = voice[0]
-                role = discord.utils.get(ctx.guild.roles, name='@everyone')
-                channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(role, connect=True,read_messages=True)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, открыл двери в комнату!')
-                await ctx.channel.send(embed = embed)
-            else:
-                channelID = voice[0]
-                channel = self.bot.get_channel(channelID)
-                await channel.set_permissions(member, connect=True)
-                embed = discord.Embed(
-                    description = f'{ctx.author.mention}, впустил {member.mention}',
-                    color = 0x2f3136)
-                await ctx.channel.send(embed = embed)
+            channelID = voice[0]
+            role = discord.utils.get(ctx.guild.roles, name = '@everyone')
+            channel = self.bot.get_channel(channelID)
+            await channel.set_permissions(role, connect=True)
+            embed = discord.Embed(
+                description = f'Приватный канал успешно открыт',
+                color = 0x2f3136)
+            await ctx.channel.send(embed = embed)
 
         conn.commit()
         conn.close()
