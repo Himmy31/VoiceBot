@@ -176,7 +176,7 @@ class Cog(commands.Cog):
         conn.close()
 
     @commands.command(aliases = ['открыть'] )
-    async def unlock(self, ctx, member: discord.Member = None):
+    async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
