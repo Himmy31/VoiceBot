@@ -134,6 +134,7 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def lock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -143,9 +144,9 @@ class Cog(commands.Cog):
         overwrite.send_messages = False        
         if voice is None:
             embed = discord.Embed(
-                description = f'<a:Deny:756507558625149041> {PREFIX}lock Участник / Роль \n'
-                'Вы не владелец этого канала\n',
+                description = f'<a:Deny:756507558625149041> **{PREFIX}lock Участник / Роль**',
                 color = 0xFF0000)
+            embed.set_footer(text = 'Вы не владелец этого канала')
             await ctx.channel.send(embed = embed, delete_after = 20)
         if role:
             channelID = voice[0]
@@ -179,6 +180,7 @@ class Cog(commands.Cog):
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
+        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
@@ -188,10 +190,9 @@ class Cog(commands.Cog):
         overwrite.send_messages = False        
         if voice is None:
             embed = discord.Embed(
-                description = f'<a:Deny:756507558625149041> {PREFIX}lock Участник / Роль \n'
-                'Вы не владелец этого канала\n',
+                description = f'<a:Deny:756507558625149041> **{PREFIX}lock Участник / Роль**',
                 color = 0xFF0000)
-            await ctx.channel.send(embed = embed, delete_after = 20)
+            embed.set_footer(text = 'Вы не владелец этого канала')
         if role:
             channelID = voice[0]
             channel = self.bot.get_channel(channelID)
