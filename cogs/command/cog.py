@@ -26,7 +26,7 @@ class Cog(commands.Cog):
             title = 'Команды',
             description = f'`{PREFIX}lock`/`unlock` - закрыть/открыть приватный канал для всех пользователей.\n' 
             f'`{PREFIX}hide/show` - скрыть/показать приватный канал от всех пользователей.\n'
-            f'`{PREFIX}claim` - Заявить свои права на голосовой канал'
+            f'`{PREFIX}claim` - Заявить свои права на голосовой канал\n'
             f'`{PREFIX}name` name - Изменить имя голосовому каналу\n' 
             f'`{PREFIX}limit` number - Изменить количество участников\n',
             color = 0x2f3136)
