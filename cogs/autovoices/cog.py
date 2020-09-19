@@ -79,3 +79,16 @@ class Cog(commands.Cog):
                 pass
         conn.commit()
         conn.close()
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+    	await ctx.message.delete()
+
+    	if isinstance(error, commands.CommandNotFound):
+    		return
+    	embed = discord.Embed(
+    		title = 'Ошибка',
+    		description = f'Не верно введена команда...',
+    		color = 0x2f3136)
+    	embed.set_thumbnail(url = f'{ctx.author.avatar_url}')
+    	await ctx.send(embed = embed, delete_after = 15)
