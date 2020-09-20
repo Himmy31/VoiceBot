@@ -82,8 +82,6 @@ class Cog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-    	await ctx.message.delete()
-
     	if isinstance(error, commands.CommandNotFound):
     		return
     	embed = discord.Embed(
