@@ -131,12 +131,12 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def lock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
-        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
+        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite(connect = False)
         overwrite.send_messages = False        
         if voice is None:
@@ -177,12 +177,12 @@ class Cog(commands.Cog):
 
     @commands.command(aliases = ['открыть'] )
     async def unlock(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
-        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
+        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite(connect = True)
         overwrite.send_messages = False        
         if voice is None:
@@ -224,12 +224,12 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def hide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
-        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
+        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite()
         overwrite.read_messages=False      
         if voice is None:
@@ -270,12 +270,12 @@ class Cog(commands.Cog):
 
     @commands.command(aliases = ['show'])
     async def unhide(self, ctx, role: Optional[discord.Role] = None, member: Optional[discord.Member] = None):
-        await ctx.message.delete()
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
+        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite()
         overwrite.send_messages = False        
         if voice is None:
@@ -409,3 +409,9 @@ class Cog(commands.Cog):
                     c.execute("UPDATE voiceChannel SET userID = ? WHERE voiceID = ?", (id, channel.id))
             conn.commit()
             conn.close()
+
+    @commands.command()
+    async def ping(self, ctx):
+        if check_channel(ctx.channel.id):
+            await ctx.channel.purge(limit = 1)
+            await ctx.send(f'Пинг ~ {ctx.bot.ws.latency * 1000:.0f} мс')
