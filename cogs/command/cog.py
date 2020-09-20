@@ -136,7 +136,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite(connect = False)
         overwrite.send_messages = False        
         if voice is None:
@@ -182,7 +181,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite(connect = True)
         overwrite.send_messages = False        
         if voice is None:
@@ -229,7 +227,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite()
         overwrite.read_messages=False      
         if voice is None:
@@ -275,7 +272,6 @@ class Cog(commands.Cog):
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
-        await ctx.message.delete()
         overwrite = discord.PermissionOverwrite()
         overwrite.send_messages = False        
         if voice is None:
@@ -412,5 +408,4 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        await ctx.message.delete()
         await ctx.send(f'Пинг ~ {ctx.bot.ws.latency * 1000:.0f} мс')
