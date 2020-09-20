@@ -28,7 +28,9 @@ class Cog(commands.Cog):
         overwrite = discord.PermissionOverwrite(connect = True, manage_channels = True)
         overwrite.send_messages = False  
         if voice is None:
-            await channel2.delete()
+            def check(a,b,c):
+                return len(channel2.members) == 0
+            await channel2.delete(3)
             pass
         else:
             voiceID = voice[0]
@@ -39,7 +41,7 @@ class Cog(commands.Cog):
                     if cooldown is None:
                         pass
                     else:
-                        await asyncio.sleep(5)
+                        await asyncio.sleep(3)
                     c.execute("SELECT voiceCategoryID FROM guild WHERE guildID = ?", (guildID,))
                     voice=c.fetchone()
                     c.execute("SELECT channelName, channelLimit FROM userSettings WHERE userID = ?", (member.id,))
