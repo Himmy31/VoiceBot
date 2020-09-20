@@ -69,7 +69,7 @@ class Cog(commands.Cog):
                     category = self.bot.get_channel(categoryID)
                     channel2 = await member.guild.create_voice_channel(name, category = category)
                     channelID = channel2.id
-                    await member.edit(voice_channel = channel2)
+                    await member.move_to(channel2)
                     await channel2.set_permissions(member, overwrite = overwrite)
                     await channel2.edit(name = name, user_limit = limit)
                     c.execute("INSERT INTO voiceChannel VALUES (?, ?)", (id,channelID))
