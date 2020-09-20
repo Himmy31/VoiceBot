@@ -412,6 +412,5 @@ class Cog(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        if check_channel(ctx.channel.id):
-            await ctx.channel.purge(limit = 1)
-            await ctx.send(f'Пинг ~ {ctx.bot.ws.latency * 1000:.0f} мс')
+        await ctx.message.delete()
+        await ctx.send(f'Пинг ~ {ctx.bot.ws.latency * 1000:.0f} мс')
