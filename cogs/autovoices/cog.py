@@ -25,7 +25,10 @@ class Cog(commands.Cog):
         guildID = member.guild.id
         c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
         voice=c.fetchone()
+        overwrite = discord.PermissionOverwrite(connect = True, manage_channels = True)
+        overwrite.send_messages = False  
         if voice is None:
+            await channel2.delete()
             pass
         else:
             voiceID = voice[0]
@@ -64,8 +67,8 @@ class Cog(commands.Cog):
                     category = self.bot.get_channel(categoryID)
                     channel2 = await member.guild.create_voice_channel(name, category = category)
                     channelID = channel2.id
-                    await member.edit(voice_channel = channel2)
-                    await channel2.set_permissions(member, connect = True, manage_channels = True)
+                    await member.edit(voice_channel = channel)
+                    await channel2.set_permissions(member, overwrite = overwrite)
                     await channel2.edit(name = name, user_limit = limit)
                     c.execute("INSERT INTO voiceChannel VALUES (?, ?)", (id,channelID))
                     conn.commit()
