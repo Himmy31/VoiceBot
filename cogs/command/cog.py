@@ -412,11 +412,11 @@ class Cog(commands.Cog):
 
     @commands.command(aliases = ["ударить", "удар",])
     async def slap(self, ctx, member: discord.Member = None):
-        await ctx.channel.purge(limit = 1)
+        await ctx.message.delete()
         if member is None:
-        	await ctx.channel.purge(limit = 0)
+        	await ctx.message.delete()
         elif member is ctx.message.author:
-        	await ctx.channel.purge(limit = 0)
+        	await ctx.message.delete()
         else:
         	a = ('https://media.giphy.com/media/QWdVzT3rQccJrEzce9/giphy.gif','https://media.giphy.com/media/Gf3AUz3eBNbTW/giphy.gif', 'https://media.giphy.com/media/xUNd9HZq1itMkiK652/giphy.gif', 'https://media.giphy.com/media/iMCedi21L9MXg1gN43/giphy.gif', 'https://media.giphy.com/media/6Fad0loHc6Cbe/giphy.gif')
         	embed = discord.Embed(
